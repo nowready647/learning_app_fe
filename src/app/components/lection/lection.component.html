@@ -1,0 +1,5 @@
+<div *ngIf="lection">
+    <h1>{{lection.title}}</h1>
+    <p-divider></p-divider>
+    <div [innerHTML]="lection.content" class="text-justify"></div>
+</div>

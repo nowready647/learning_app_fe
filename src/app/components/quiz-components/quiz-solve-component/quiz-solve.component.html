@@ -1,0 +1,64 @@
+
+<form [formGroup]="solveForm">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <i class="fa fa-pencil" style="margin-right: 10px; font-size: 20px;"></i> -->
+            <h2 class="section-heading mb-4 inline-block">{{title}}</h2>
+            <p class="paragraph text-muted">{{description}}</p>
+        </div>
+        <p-divider></p-divider>
+    </div>
+    <div class="row">
+        
+
+        <div class="col-md-6 col-md-offset-3" style="padding: 5px;" *ngFor="let item of getControls(); let i = index" formArrayName="questions">
+            <div class="question-number-f" *ngIf="item.value.correct === null">
+                <p-badge [value]="(i + 1).toString()" severity="#7e3d9b" size="xlarge"></p-badge>
+            </div>
+            <div class="question-number-f" *ngIf="item.value.correct === true">
+                <i class="fa fa-check-circle-o" aria-hidden="true" style="color: #28a745 !important; font-size: 30px; background-color: white; border-radius: 100%;"></i>
+            </div>
+            <div class="question-number-f" *ngIf="item.value.correct === false">
+                <i class="fa fa-times-circle-o" aria-hidden="true" style="color: #dc3545 !important; font-size: 30px; background-color: white; border-radius: 100%;"></i>
+            </div>
+                <div class="col-md-12 no-padding" [ngClass]="{'correct-answer' : item.value.correct === true, 'wrong-answer': item.value.correct === false}">
+                    <p-card [header]="item.value.question">
+                    <p class="text-muted" *ngIf="item.value.description">{{item.value.description}}</p>
+                    <p-divider></p-divider>
+                    <ng-container [ngTemplateOutlet]="setNgOutlet(item.value.type)" [ngTemplateOutletContext]="{choices: item.value.choices, group: i}"></ng-container>
+                </p-card>
+                </div>
+            <div class="col-md-6" *ngIf="item.value.correct === false" >
+                <p class="text-danger">{{'Správná odpověď: ' + getCorrectAnswersString(item.value)}}</p>
+            </div>
+        </div>
+    </div>
+    <ng-template #select let-choices="choices" let-group="group" formArrayName="questions">
+        <div class="form-group" [formGroupName]="group">
+            <p-dropdown [options]="prepareChoices(choices)" ptionLabel="name" formControlName="answer" [style]="{'minWidth':'100%'}" placeholder="Vyberte"></p-dropdown>
+        </div>
+    </ng-template>
+    
+    <ng-template #text let-group="group" formArrayName="questions">
+        <div class="form-group" [formGroupName]="group">
+            <input type="text" formControlName="answer" class="form-control" placeholder="Odpověď">
+        </div>
+    </ng-template>
+
+    <ng-template #radio let-choices="choices" let-group="group" formArrayName="questions" >
+          <div class="form-check" *ngFor="let choice of choices;" [formGroupName]="group">
+            <input class="form-check-input margin-right-small" type="checkbox" [value]="choice.id" formControlName="answer" (change)="onCheckBoxClick($event, group)">
+            <label>
+              {{choice.description}}
+            </label>
+          </div>
+    </ng-template>
+</form>
+<div class="row">
+    <div class="float-right" *ngIf="getControls().length !== 0">
+            <button class="btn btn-primary navbar-color-default" (click)="onSubmit()">
+            <i class="fa fa-plus fa-lg"></i>
+            <p style="display: inline;" class="margin-left-small text-bold">Vyhodnotit</p>
+        </button>
+    </div>
+</div>

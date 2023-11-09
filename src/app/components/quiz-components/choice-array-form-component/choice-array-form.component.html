@@ -1,0 +1,39 @@
+<form [formGroup]="arrayForm">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="input-group">
+                <input id="title" type="text" [formControl]="question_title" class="form-control" placeholder="Zadejte možnost">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-success" (click)="onChoiceAdd()" pTooltip="Přidat možnost">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top-small">
+        <div *ngFor="let item of choices; let i = index" >
+            <div class="col-md-9">
+                <p>{{(i + 1).toString() + '.'}} {{item.description}}</p>
+            </div>
+            <div class="col-md-1 text-success" pTooltip="Správná odpověď" *ngIf="!item.is_valid; else invalid">
+                <button class="bg-transparent" (click)="onIsValidClick(i)">
+                    <i class="fa fa-check fa-lg pointer-event-auto"></i>
+                </button>
+            </div>
+            <ng-template #invalid>
+                <div class="col-md-1 text-danger" pTooltip="Špatná odpověď">
+                    <button class="bg-transparent" (click)="onInvalidClick(i)">
+                        <i class="fa fa-times fa-lg pointer-event-auto"></i>
+                    </button>
+                </div>
+            </ng-template>
+            <div class="col-md-1 text-danger" pTooltip="Odstranit možnost">
+                <button class="bg-transparent" (click)="onDeleteClick(i)">
+                    <i class="fa fa-times fa-lg pointer-event-auto"></i>
+                </button>
+            </div>
+            <p-divider></p-divider>
+        </div>
+    </div>
+</form>

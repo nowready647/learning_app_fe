@@ -1,0 +1,46 @@
+<div class="col-md-12">
+    <div class="col-md-12 underline">
+        <h1>Registrace</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-at" aria-hidden="true"></i>
+                </span>
+                <input id="email" type="text" [formControl]="email" class="form-control" aria-describedby="basic-addon1" placeholder="Email">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                </span>
+                <input id="user" type="text" [formControl]="user" class="form-control" aria-describedby="basic-addon1" placeholder="Uživatelské jméno">
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                </span>
+                <input id="password" type="text" [formControl]="password" class="form-control" aria-describedby="basic-addon1" placeholder="Heslo">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                </span>
+                <input id="password_check" type="text" [formControl]="password_check" class="form-control" aria-describedby="basic-addon1" placeholder="Heslo znovu">
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top">
+        <div class="col-md-2">
+            <button type="button" pButton class="btn" (click)="onRegisterButtonClick()">Registrovat</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="row margin-bottom-small" *ngIf="userId">
+    <div class="col-md-2">
+        <p-button label="Přidat kvíz" icon="pi pi-plus" styleClass="p-button-lg" [routerLink]="['/quiz-form-component']"></p-button>
+    </div>
+</div>
+    <div class="container2">
+        <div class="quiz-card padding-small" *ngFor="let item of list">
+            <ng-contrainer [ngTemplateOutlet]="card" [ngTemplateOutletContext]="{quiz: item}"></ng-contrainer>
+        </div>
+    </div>
+
+<ng-template #card let-quiz="quiz">
+    <div class="card shadow p-3 mb-5 bg-white rounded" [routerLink]="['/quiz-solve-component', quiz.id]">
+        <div class="card-body">
+            <h3>{{quiz.title}}</h3>
+            <h6 class="card-subtitle mb-2 text-muted">{{'Od uživatele: ' + quiz.user.nick}}</h6>
+            <p>{{quiz.description}}</p>
+        </div>
+    </div>
+    <div style="margin-top: auto"  *ngIf="userId === quiz.user.id">
+        <p-divider></p-divider>
+    </div>
+    <div style="margin-left: auto; padding-top: 0px; padding-bottom: 5px;" *ngIf="userId === quiz.user.id">
+        <p-button label="Upravit" icon="pi pi-pencil"></p-button>
+        <p-button label="Odstranit" icon="pi pi-times" styleClass="p-button-secondary" [style]="{ 'margin-left': '5px' }" (onClick)="deleteQuiz(quiz.id)"></p-button>
+    </div>
+
+</ng-template>

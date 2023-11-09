@@ -1,0 +1,31 @@
+<div class="col-md-12 underline">
+    <h1>Přihlášení uživatele</h1>
+</div>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-at" aria-hidden="true"></i>
+                </span>
+                <input id="email" type="text" [formControl]="email" class="form-control" aria-describedby="basic-addon1" placeholder="Email">
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top">
+        <div class="col-md-12">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">
+                    <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                </span>
+                <input id="user" type="password" [formControl]="password" class="form-control" aria-describedby="basic-addon1" placeholder="Heslo">
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top">
+        <div class="col-md-2">
+            <button type="button" pButton class="btn" (click)="onLogIn()">Přihlásit</button>
+        </div>
+    </div>
+</div>
+
