@@ -7,4 +7,8 @@ export interface Quiz {
     description: string;
     user: User;
     questions: Array<Question>;
+    solved: boolean;
+    points: number | null;
+    questionsCount: number | null;
+    count: number | null;
 }

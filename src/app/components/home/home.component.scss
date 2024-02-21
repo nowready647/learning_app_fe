@@ -1,0 +1,45 @@
+::ng-deep {
+    .p-tooltip {
+        max-width: 200px;
+     }
+} 
+
+.golden {
+    font-size: 70px;
+    color: #FFD700;
+    -webkit-text-stroke: 1.5px black;
+}
+
+.silver {
+    font-size: 70px;
+    color: #D3D3D3;
+    -webkit-text-stroke: 1.5px black;
+}
+
+.bronze {
+    font-size: 70px;
+    color: #CD7F32;
+    -webkit-text-stroke: 1.5px black;
+}
+
+.percents {
+    position: relative;
+    top: -85px !important;
+}
+
+.cont{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px;
+}
+.item {
+    display: flex;
+    flex-direction: column;
+    flex-basis: calc(50.00% - 10px);
+}
+
+.percents-badge {
+    position: relative;
+    top: -13px !important;
+}

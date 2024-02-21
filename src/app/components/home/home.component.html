@@ -1,8 +1,98 @@
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque beatae magni hic, magnam deserunt, nisi ab tenetur nulla aspernatur maxime non veritatis sequi debitis architecto temporibus atque, quod dolor eveniet!</p>
-<ul class="list-style-none">
-    <li><span class="margin-right-big">0,0 – 0,1</span>Zanedbatelná závislost</li>
-    <li><span class="margin-right-big">0,1 – 0,3</span>Slabá závislost</li>
-    <li><span class="margin-right-big">0,3 – 0,7</span>Střední závislost</li>
-    <li><span class="margin-right-big">0,7 – 1,0</span>Vysoká závislost</li>
-</ul>
+<div class="row">
+    <h1 class="title">Nástěnka</h1>
+    <p-divider></p-divider>
+</div>
+<div class="row">
+    <div class="cont">
+        <ng-container [ngTemplateOutlet]="topList"></ng-container>
+       <ng-container [ngTemplateOutlet]="questions"></ng-container>
+    </div>
+</div>
+<div class="row">
+   <ng-container [ngTemplateOutlet]="topQuizesList"></ng-container>
+</div>
 
+<ng-template #topList>
+    <div class="item" style="border: 1px solid lightgray; border-radius: 20px; margin-bottom: 10px; padding: 40px;">
+        <div class="col-md-12">
+            <div class="row" *ngIf="topSolvers">
+                <div class="margin-bottom-2xbig">
+                    <h2 class="title display-inline">Nejúspěšnější řešitelé</h2>
+                    <p-divider></p-divider>
+                </div>
+                <div class="row">
+                    <ng-container [ngTemplateOutlet]="trophy" [ngTemplateOutletContext]="{index: 0, trophyType: 'golden'}"></ng-container>
+                    <ng-container [ngTemplateOutlet]="trophy" [ngTemplateOutletContext]="{index: 1, trophyType: 'silver'}"></ng-container>
+                    <ng-container [ngTemplateOutlet]="trophy" [ngTemplateOutletContext]="{index: 2, trophyType: 'bronze'}"></ng-container>
+                </div>
+                <div class="row">
+                    <ng-container [ngTemplateOutlet]="badge" [ngTemplateOutletContext]="{position: 4, index: 3}"></ng-container>
+                    <ng-container [ngTemplateOutlet]="badge" [ngTemplateOutletContext]="{position: 5, index: 4}"></ng-container>
+                    <ng-container [ngTemplateOutlet]="badge" [ngTemplateOutletContext]="{position: 6, index: 5}"></ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #questions>
+    <div class="item" style="width: 50%; border: 1px solid lightgray; border-radius: 20px; margin-bottom: 10px; padding: 40px;">
+        <div class="col-md-12">
+            <app-qa [limit]="2" [page]="null" *ngIf="userId"></app-qa>
+        </div>
+        <div class="row" *ngIf="!userId">
+            <div class="margin-bottom-2xbig">
+                <h2 class="title display-inline">Vaše dotazy</h2>
+                <p-divider></p-divider>
+            </div>
+            <p class="text-muted margin-top-small">
+                Zatím nemáte žádné otázky. Pokud vás něco zajímá, první se prosím zaregistrujte a poté vyplňte formulář pro položení otázky.
+            </p>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #badge let-position="position" let-index="index">
+    <div class="col-md-4 text-center" *ngIf="topSolvers[index]">
+        <div class="row">
+            <p-badge [value]="position" size="xlarge"></p-badge>
+            <p class="text-bold">{{topSolvers[index].nick}}</p>
+            <p class="text-bold text-muted text-center percents-badge">{{(topSolvers[index].success  | number: '1.0-0') + '%'}}</p>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #trophy let-trophyType="trophyType" let-index="index">
+    <div class="col-md-4 text-center" *ngIf="topSolvers[index]">
+        <div class="row">
+            <i class="fa fa-trophy" [ngClass]="trophyType"></i>
+            <p class="text-bold">{{topSolvers[index].nick}}</p>
+            <p class="text-bold text-white percents">{{(topSolvers[index].success  | number: '1.0-0') + '%'}}</p>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #topQuizesList>
+    <div class="col-md-12" style="border: 1px solid lightgray; border-radius: 20px;">
+        <div class="col-md-12 margin-bottom-big">
+            <div class="col-md-3">
+                <h3 class="title">Nejpopulárnější kvízy</h3>
+            </div>
+            <p-divider></p-divider>
+        </div>
+        <div class="col-md-12 margin-bottom-big">
+            <div class="col-md-4 padding-small" *ngFor="let item of topQuizes" >
+                <div class="quiz-card">
+                    <div class="info">
+                        <i class="fa fa-info-circle text-info info font-size-20" aria-hidden="true" [pTooltip]="item.description"></i>
+                    </div>
+                    <div class="col-md-12 navbar-color-default quiz-card-color-stripe"></div>
+                    <div class="quiz-card-inner quiz-card-padding">
+                        <h4>{{item.title}}</h4>
+                        <p class="text-muted">Počet absolvování: {{item.count}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

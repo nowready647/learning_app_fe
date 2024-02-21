@@ -17,4 +17,8 @@ export class UserService {
   public find(id: number): Observable<any> {
     return this.http.post(this.constants.API_USER_FIND, { id: id });
   }
+
+  public getTopSolvers(): Observable<any> {
+    return this.http.get(this.constants.API_USER_GET_TOP_SOLVERS);
+  }
 }
