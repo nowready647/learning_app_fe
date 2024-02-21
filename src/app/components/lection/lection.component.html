@@ -1,5 +1,20 @@
-<div *ngIf="lection">
-    <h1>{{lection.title}}</h1>
-    <p-divider></p-divider>
-    <div [innerHTML]="lection.content" class="text-justify"></div>
-</div>
+<p-tabView *ngIf="lection" (onChange)="quizId = $event.index === 1 ? lection.id_quiz : null">
+    <p-tabPanel header="Článek">
+        <ng-container [ngTemplateOutlet]="lectionTemplate" [ngTemplateOutletContext]="{lection: lection}"></ng-container>
+
+    </p-tabPanel>
+    <p-tabPanel header="Kvíz" [disabled]="!lection.id_quiz">
+       <app-quiz-solve [quizId]="quizId" [quizId]="lection.id_quiz" *ngIf="lection.id_quiz"></app-quiz-solve>
+    </p-tabPanel>
+</p-tabView>
+<ng-template #lectionTemplate let-lection="lection">
+    <div *ngIf="lection" class="row">
+        <div class="col-md-12 navbar-color-default quiz-card-color-stripe border-radius-3"></div>
+        <div class="quiz-card-create col-md-12">
+            <h3 class="margin-left-small">{{lection.title}}</h3>
+            <div *ngIf="lection.content" [innerHTML]="lection.contentHtml" class="text-justify lection-padding"></div>
+        </div>
+        
+    </div>
+</ng-template>
+

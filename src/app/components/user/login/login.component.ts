@@ -4,13 +4,15 @@ import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/environments/User';
 import { LoginService } from 'src/app/services/login.service';
 import { SessionStorage, SessionStorageService } from 'ngx-webstorage';
+import { HttpResponse } from '@angular/common/http';
+declare var alertify:any;
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   email = new FormControl()
   password = new FormControl()
@@ -28,28 +30,27 @@ export class LoginComponent implements OnInit {
     protected userService: UserService, 
     ) {}
 
-  ngOnInit(): void {
-  } 
-
   public onLogIn(): void {
-      this.loginService.verifyCredentials(this.email.value, this.password.value).subscribe(
-        (data) => {
-          let user: User = {
-            id: data.data.id,
-            nick: data.data.nick,
-            email: data.data.email,
-            accessToken: data.data.accessToken,
+      this.loginService.verifyCredentials(this.email.value, this.password.value).subscribe({
+        next: (data: HttpResponse<any>) => {
+          const accessToken = data.headers.get('AccessToken');
+          const user: User = {
+            id: data.body.data.id,
+            nick: data.body.data.nick,
+            email: data.body.data.email,
+            accessToken: accessToken,
             password: null
           }
           this.userId = user.id;
-          this.s.store('userId', user.id)
+          this.s.store('userId', user.id);
+          this.s.store('accessToken', accessToken);
           this.sendToParent(user);
+          alertify.success('Uživatel úspěšně přihlášen');
       },
-      error => {
-        console.log(error.error.message);
+      error: (error: any) => {
+        alertify.error('CHYBA: ' + error.error.message)
       }
-      
-    );
+      });
       
   }
 

@@ -1,10 +1,10 @@
-<nav class="navbar navbar-default navbar-color-default">
+ <nav class="navbar navbar-default navbar-color-default menu">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand">StatApp</a>
     </div>
-    <ul class="nav navbar-nav text-primary">
-      <li class="menu-button"><a class="text-white" routerLink="/home-component" routerLinkActive="active"><span>Domů</span></a></li>
+    <ul class="nav navbar-nav text-primary pointer-event-auto">
+      <li class="menu-button"><a class="text-white" routerLink="" routerLinkActive="active"><span>Domů</span></a></li>
       <li class="dropdown">
         <a class="dropdown-toggle text-white" data-toggle="dropdown">
           <span>Data</span>
@@ -12,7 +12,6 @@
         <ul class="dropdown-menu">
           <li><a [routerLink]="['/lection-component', 1]" well margin-top-big padding-small>Úvod</a></li>
           <li><a [routerLink]="['/lection-component', 4]" well margin-top-big padding-small>Četnostní zpracování dat</a></li>
-          <li><a>Cvičení</a></li>
         </ul>
       </li>
       <li class="dropdown">
@@ -21,8 +20,7 @@
         <span class="caret"></span></a>
         <ul class="dropdown-menu">
           <li><a [routerLink]="['/lection-component', 2]" well margin-top-big padding-small>Úvod</a></li>
-          <li><a [routerLink]="['/lection-component', 3]" well margin-top-big padding-small>Statistické charakteristiky</a></li>
-          <li><a>Cvičení</a></li>
+          <li><a  (click)="navigate(3)" well margin-top-big padding-small>Statistické charakteristiky</a></li>
         </ul>
       </li>
       <li class="dropdown">
@@ -30,36 +28,27 @@
           <span>Demografie</span>
         <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a [routerLink]="['/lection-component', 5]" well margin-top-big padding-small>Úvod</a></li>
+          <li><a (click)="navigate(5)" well margin-top-big padding-small>Demografická statistika</a></li>
           <li><a [routerLink]="['/lection-component', 6]" well margin-top-big padding-small>Věková pyramida</a></li>
           <li><a [routerLink]="['/lection-component', 7]" well margin-top-big padding-small>Webbova typologie</a></li>
-          <li><a>Cvičení</a></li>
         </ul>
       </li>
       <li class="dropdown">
-        <a class="dropdown-toggle text-white" data-toggle="dropdown">
+        <a class="dropdown-toggle text-white " data-toggle="dropdown">
           <span>Korelační analýza</span>
         <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a [routerLink]="['/lection-component', 8]" well margin-top-big padding-small>Úvod</a></li>
-          <li><a [routerLink]="['/lection-component', 9]" well margin-top-big padding-small>Cramerův koeficient</a></li>
-          <li><a [routerLink]="['/lection-component', 10]" well margin-top-big padding-small>Kendallův koeficient</a></li>
-          <li><a [routerLink]="['/lection-component', 11]" well margin-top-big padding-small>Spearmanův koeficient</a></li>
-          <li><a [routerLink]="['/lection-component', 12]" well margin-top-big padding-small>Pearsonův koeficient</a></li>
-          <li><a>Cvičení</a></li>
+          <li ><a [routerLink]="['/lection-component', 8]" well margin-top-big padding-small>Úvod</a></li>
+          <li><a (click)="navigate(9)" well margin-top-big padding-small>Cramerův koeficient</a></li>
+          <li><a (click)="navigate(10)" well margin-top-big padding-small>Kendallův koeficient</a></li>
+          <li><a (click)="navigate(11)" well margin-top-big padding-small>Spearmanův koeficient</a></li>
+          <li><a (click)="navigate(12)" well margin-top-big padding-small>Pearsonův koeficient</a></li>
         </ul>
       </li>
-      <li class="dropdown">
-        <a class="dropdown-toggle text-white" data-toggle="dropdown">
-          <span>Kvíz</span>
-        <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a [routerLink]="['/quiz-grid-component']" well margin-top-big padding-small>Kvízy</a></li>
-          <li><a>Cvičení</a></li>
-        </ul>
-      </li>
+      <li class="menu-button"><a [routerLink]="['quiz-grid-component']" well margin-top-big padding-small class="text-white">Kvízy</a></li>
+      <li class="menu-button"><a [routerLink]="['message-grid-component']" well margin-top-big padding-small class="text-white">Poradna</a></li>
     </ul>
-    <ul class="nav navbar-nav navbar-right">
+    <ul class="nav navbar-nav navbar-right pointer-event-auto">
       <li *ngIf="!user" class="menu-button"><a (click)="displayRegister=true" well margin-top-big padding-small class="text-white"><span class="fa fa-user margin-right"></span>Registrace</a></li>
       <li *ngIf="!user" class="menu-button"><a (click)="displayLogIn=true" class="text-white"><span class="glyphicon glyphicon-log-in margin-right"></span>Přihlásit se</a></li>
       <li *ngIf="user" class="dropdown">
@@ -72,8 +61,18 @@
           </lord-icon>
         </a>
         <ul class="dropdown-menu">
-          <li><a>Profil</a></li>
-          <li><a (click)="onLogOutUser()">Odhlásit se</a></li>
+          <li class="text-bold profile-nick">
+            <a>
+              <i class="fa fa-user text-default-color" aria-hidden="true"></i>
+              <p class="no-margin inline margin-left-small text-bold">{{user.nick}}</p>
+            </a>
+          </li>
+          <li>
+            <a (click)="onLogOutUser()">
+              <i class="fa fa-sign-out text-default-color" aria-hidden="true"></i>
+              <p class="no-margin inline margin-left-small">Odhlásit se</p>
+            </a>
+          </li>
         </ul>
       </li>
     </ul>

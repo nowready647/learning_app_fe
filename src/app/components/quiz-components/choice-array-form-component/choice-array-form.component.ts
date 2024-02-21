@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ControlValueAccessor, FormArray, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChoiceService } from 'src/app/services/choice.service';
+import { Choice } from 'src/environments/Choice';
+declare var alertify:any;
 
 @Component({
   selector: 'app-choice-array-form',
@@ -12,23 +15,28 @@ import { ControlValueAccessor, FormArray, FormBuilder, FormControl, FormGroup, N
     }
   ]
 })
-export class ChoiceArrayFormComponent implements ControlValueAccessor {
+export class ChoiceArrayFormComponent {
 
   @Input() index: number;
+
+  @Input() addForm: FormGroup;
 
   @Output() choicesEmit = new EventEmitter<Array<any>>();
 
   public arrayForm: FormGroup;
 
-  public choices: Array<any> = [];
+  @Input() choices: Array<any> = [];
 
-  public question_title = new FormControl();
+  public choiceTitle = new FormControl();
 
   onChange: any = () => {}
   onTouch: any = () => {}
 
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private choiceService: ChoiceService,
+    private fb: FormBuilder
+    ) {
     this.arrayForm = this.fb.group({
       items: this.fb.array([])
     })
@@ -43,7 +51,7 @@ export class ChoiceArrayFormComponent implements ControlValueAccessor {
     return this.fb.group({
       id: this.fb.control(''),
       description: this.fb.control(title),
-      is_valid: this.fb.control('')
+      is_correct: this.fb.control('')
     })
   }
 
@@ -52,13 +60,11 @@ export class ChoiceArrayFormComponent implements ControlValueAccessor {
   }
 
   public onChoiceAdd() {
-    let choice = {id: '', description: this.question_title.value, is_valid: false};
+    let choice = {id: null, description: this.choiceTitle.value, is_correct: this.choices.length === 0};
     this.choices.push(choice);
     this.addDynamicRow(choice.description);
     this.sendToParent();
-    this.question_title.setValue(null);
-    this.onChange(choice);
-    this.onTouch(choice);
+    this.choiceTitle.setValue(null);
   }
 
   sendToParent() {
@@ -66,25 +72,33 @@ export class ChoiceArrayFormComponent implements ControlValueAccessor {
   }
 
   public onDeleteClick(i: number): void {
+    const choiceId = this.choices[i].id;
+    if (choiceId) {
+      this.deleteChoiceFromDatabase(choiceId);
+    }
     this.choices.splice(i, 1);
     this.sendToParent();
   }
 
+  private deleteChoiceFromDatabase(choiceId: number): void {
+    this.choiceService.delete(choiceId).subscribe({
+      next: (res) => {
+        alertify.success('Možnost byla úspěšně smazána.')
+      },
+      error: (err) => {
+        alertify.error('CHYBA: ' + err.message)
+      },
+      complete: () => {}
+    })
+  }
+
   public onIsValidClick(i: number): void {
-    this.choices[i].is_valid = true;
+    if (!(this.addForm.value.questions[this.index].input_type === 'select' && this.choices.filter(x => x.is_correct === true).length > 0)) {
+      this.choices[i].is_correct = true;
+    }
   }
 
   public onInvalidClick(i: number): void {
-    this.choices[i].is_valid = false;
-  }
-
-  writeValue(obj: any): void {
-    // this.choices.push(obj)
-  }
-  registerOnChange(fn: any): void {
-   this.onChange = fn;
-  }
-  registerOnTouched(fn: any): void {
-    this.onTouch = fn;
+    this.choices[i].is_correct = false;
   }
 }

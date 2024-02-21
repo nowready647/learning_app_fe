@@ -1,20 +1,19 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { isEmpty } from 'rxjs';
+import { SessionStorageService } from 'ngx-webstorage';
 import { QuizService } from 'src/app/services/quiz.service';
 import { Choice } from 'src/environments/Choice';
-import { Question } from 'src/environments/Question';
 import { Quiz } from 'src/environments/Quiz';
+declare var alertify: any;
 
 @Component({
   selector: 'app-quiz-solve',
   templateUrl: './quiz-solve.component.html',
 })
-export class QuizSolveComponent implements OnInit {
+export class QuizSolveComponent implements OnInit, OnChanges {
 
-  // protected quizId: number;
+  @Input() quizId: number | null;
 
   @ViewChild('select', { read: TemplateRef }) select: TemplateRef<any>;
 
@@ -24,15 +23,28 @@ export class QuizSolveComponent implements OnInit {
 
   public quiz: Quiz;
 
-  public title: string;
-
-  public description: string;
+  protected userId: number;
 
   protected points: number = 0;
 
   protected solveForm: FormGroup;
 
-  public showAnswers: boolean = false;
+  public isSubmited: boolean = false;
+
+  public time: number = 0;
+
+  public timeText: string;
+
+  public interval: any;
+
+  public numberOfQuestions: number = 0;
+
+  public numberOfSolvedQuestions: number = 0;
+  
+  public numberOfCorrectQuestions: number = 0;
+
+  public numberOfWrongQuestions: number = 0;
+
 
   public inputTypes = [
     {name: 'text', value: 'text'},
@@ -41,26 +53,62 @@ export class QuizSolveComponent implements OnInit {
   ]
 
   constructor(
+    private sessionStorage: SessionStorageService,
     private quizService: QuizService,
     private fb: FormBuilder,
     private route: ActivatedRoute
   ) {}
 
-
+  ngOnChanges(changes: SimpleChanges): void {
+    this.time = 0;
+    this.interval;
+  }
+  
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.quizService.find(params['id']).subscribe(data => {
+    if(this.quizId) {
+      this.quizService.find(this.quizId).subscribe(data => {
         this.quiz = data.body;
-        this.title = this.quiz.title;
-        this.description = this.quiz.description;
-        this.quiz.questions.forEach(element => {
+        data.body.questions.forEach((element: any) => {
           this.addQuestion(element);
+          this.numberOfQuestions++;
         })
-      })
-    })
+      });
+    } else {
+      this.route.params.subscribe(params => {
+        console.log(params);
+        this.quizService.find(params['id']).subscribe(data => {
+          console.log(data);
+          this.quiz = data.body;
+          data.body.questions.forEach((element: any) => {
+            this.addQuestion(element);
+            this.numberOfQuestions++;
+          })
+        });
+      });
+    }
     this.solveForm = this.fb.group({
       questions: this.fb.array([])
     })
+
+    this.userId = this.sessionStorage.retrieve('userId');
+
+    this.interval = setInterval(() => {
+      this.timeText = '';
+      this.time++;
+      let minutes = Math.floor(this.time / 60);
+
+      if (minutes < 10) {
+        this.timeText += '0' + minutes.toString() + ':';
+      } else {
+        this.timeText += minutes.toString() + ':';
+      }
+
+      if ((this.time % 60) < 10) {
+        this.timeText += '0' + (this.time % 60 % 10).toString();
+      } else {
+        this.timeText += (this.time % 60).toString();
+      }
+    }, 1000)
   }
 
   protected addQuestion(element: any) {
@@ -83,28 +131,45 @@ export class QuizSolveComponent implements OnInit {
   }
 
   public onSubmit() {
+    this.isSubmited = true;
+    clearInterval(this.interval);
     const values = this.solveForm.value;
     this.validateQuiz(values.questions);
+    if(this.userId) {
+      this.quizService.solve(this.userId, this.quiz.id, this.numberOfCorrectQuestions).subscribe({
+        next: (data) => {},
+        error: (error) => {
+          console.log(error.body);
+          alertify.error(error.error.message);
+        }
+      });
+    }
   }
 
   protected validateQuiz(values: any) {
-    let controls = this.getControls();
+    let questions = this.getControls();
     values.forEach((question: any, index: number) => {
-      let correctAnswer = question.choices.filter((x: any) => x.is_correct === 1);
+      let correctAnswer = question.choices.filter((x: any) => x.is_correct === 1 || x.is_correct === true);
       switch(question.type) {
         case 'text':
-          controls[index].value.correct = false
+          questions[index].value.correct = false
           correctAnswer.forEach((elem: any) => {
             if (elem.description === question.answer) {
-              controls[index].value.correct = true;
+              questions[index].value.correct = true;
+              this.numberOfCorrectQuestions++;
+            } else {
+              this.numberOfWrongQuestions++;
             }
           })
           return;
         case 'select':
-          controls[index].value.correct = false
+          questions[index].value.correct = false
           correctAnswer.forEach((elem: any) => {
             if (elem.id === question.answer) {
-              controls[index].value.correct = true;
+              questions[index].value.correct = true;
+              this.numberOfCorrectQuestions++;
+            } else {
+              this.numberOfWrongQuestions++;
             }
           })
           return;
@@ -116,9 +181,11 @@ export class QuizSolveComponent implements OnInit {
             let idArray = this.createIdArray(correctAnswer);
             correctAnswer = idArray.filter((x: any) => !question.checkboxes.includes(x))
             if(correctAnswer.length === 0) {
-            controls[index].value.correct = true
+              questions[index].value.correct = true
+              this.numberOfCorrectQuestions++;
             } else {
-              controls[index].value.correct = false
+              questions[index].value.correct = false
+              this.numberOfWrongQuestions++;
             }
           }
           return;
@@ -155,7 +222,7 @@ export class QuizSolveComponent implements OnInit {
     return names;
   }
 
-  public onCheckBoxClick(e: any, questionIndex: number) {
+  public onCheckBoxClick(e: any, questionIndex: number): void {
     let questions = (this.solveForm.get('questions') as FormArray).controls[questionIndex] as FormGroup
     let selected = questions.controls['checkboxes'] as FormArray;
     if(e.target.checked) {
@@ -174,7 +241,7 @@ export class QuizSolveComponent implements OnInit {
   }
 
   public getCorrectAnswersString(item: any): string {
-    const correctAnswers = this.prepareChoices(item.choices).filter((x: any) => x.is_correct === 1);
+    const correctAnswers = this.prepareChoices(item.choices).filter((x: any) => x.is_correct === 1 || x.is_correct === true);
     let text = '';
     if(correctAnswers.length === 1) {
       text = correctAnswers[0].label
@@ -184,6 +251,11 @@ export class QuizSolveComponent implements OnInit {
       })
     }
     return text;
+  }
+
+  public recalculateAnsweredQuestions(): void {
+    let answers = this.getControls().filter((x: any) => x.value.answer !== '' && x.value.answer !== false);
+    this.numberOfSolvedQuestions = answers.length;
   }
 
 }

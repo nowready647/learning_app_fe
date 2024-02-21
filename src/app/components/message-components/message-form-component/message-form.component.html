@@ -1,0 +1,34 @@
+<form [formGroup]="messageForm">
+    <div class="col-md-12 underline">
+        <h1>Zeptat se</h1>
+    </div>
+    <div class="row margin-bottom-big">
+        <div class="col-md-12">
+            <span class="text-muted">
+                Pokud vás něco zajímá, či nemůžete na svou otázku najít odpověď na internetu, zkuste štěstí v naší poradně, kde vám mohou odpovědět ostatní uživatele.
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Titulek</label>
+                <input type="text" placeholder="Zadejte nadpis" formControlName="title"  class="form-control" required>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <label required>Dotaz</label>
+                <textarea type="text" placeholder="Zadejte dotaz" formControlName="content"  class="form-control" required></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" *ngIf="userId">
+            <button class="btn btn-primary navbar-color-default" (click)="onSubmit()" [disabled]="!messageForm.valid">
+                <i class="fa" [ngClass]="{'fa-paper-plane-o': !message, 'fa-pencil fa-lg': message}"></i>
+                <p class="margin-left-small inline">{{!message ? 'Odeslat': 'Upravit'}}</p>
+            </button>
+        </div>
+    </div>
+</form>

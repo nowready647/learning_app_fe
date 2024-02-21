@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { SessionStorageService } from 'ngx-webstorage';
 import { User } from 'src/environments/User';
 import { UserService } from './services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,7 @@ import { UserService } from './services/user.service';
 export class AppComponent implements OnInit {
 
 constructor(
+  protected router: Router,
   protected sessionStorage: SessionStorageService,
   protected userService: UserService
   ) {}
@@ -25,7 +27,6 @@ constructor(
     if(id) {
       this.userService.find(Number(id)).subscribe(data => {
         this.user = data.data;
-        console.log(this.user)
       })
     }
   }
@@ -40,10 +41,23 @@ constructor(
 
   public setUser(user: User): void {
     this.user = user;
+    this.reloadCurrentRoute();
   }
 
   public onLogOutUser(): void {
     this.user = null;
     this.sessionStorage.clear('userId');
+    this.reloadCurrentRoute();
+  }
+
+  private reloadCurrentRoute() {
+    window.location.reload();
+  }
+
+  public navigate(index: number) {
+    this.router.navigate(['/lection-component', index])
+  .then(() => {
+    window.location.reload();
+  });
   }
 }

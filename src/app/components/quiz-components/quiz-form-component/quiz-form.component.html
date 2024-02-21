@@ -1,7 +1,8 @@
 <form [formGroup]="addForm">
 <div class="row">
     <i class="fa fa-pencil" style="margin-right: 10px; font-size: 20px;"></i>
-    <h3 class="section-heading mb-4 inline-block">Nový kvíz</h3>
+    <h3 class="section-heading mb-4 inline-block">{{title}}</h3>
+    <h3 class="section-heading mb-4 inline-block margin-left-small text-default-color" *ngIf="quiz">{{quiz.title}}</h3>
 <p-divider></p-divider>
 </div>
 <div class="row">
@@ -24,7 +25,7 @@
             <span class="input-group-addon" id="basic-addon1">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
             </span>
-            <textarea id="title" type="text" formControlName="description" class="form-control" aria-describedby="basic-addon1" placeholder="Popis" rows="1"></textarea>
+            <textarea id="description" type="text" formControlName="description" class="form-control" aria-describedby="basic-addon1" placeholder="Popis" rows="1"></textarea>
         </div>
     </div>
 </div>
@@ -46,7 +47,7 @@
             <div class="col-md-12 quiz-card-create margin-mid" [formGroupName]="i" style="display: inline; padding-top: 20px;">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <input id="title" type="text" formControlName="title" class="form-control" placeholder="Otázka" required>
+                        <input id="question" type="text" formControlName="question" class="form-control" placeholder="Otázka" required>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -56,74 +57,31 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <select formControlName="type" class="form-control">
+                        <select formControlName="input_type" class="form-control">
                             <option *ngFor="let type of inputTypes" [ngValue]="type.value">
                                 {{type.name}}
                             </option>
                         </select>
-                    </div>
+                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <app-choice-array-form formArrayName="choices" [index]="i" (choicesEmit)="setChoices($event, i)"></app-choice-array-form>
+                        <app-choice-array-form formArrayName="choices" [choices]="item.value.choices" [addForm]="addForm" [index]="i" (choicesEmit)="setChoices($event, i)"></app-choice-array-form>
                     </div>
                 </div>
             </div>
-            <!-- <p-divider></p-divider> -->
         </div>
 </div>
 </form>
 <div class="row">
     <div>
-        <i class="fa fa-plus fa-lg navbar-color-default quiz-icon margin-bottom-small" (click)="onAddTextClick()"></i>
+        <i class="fa fa-plus fa-lg navbar-color-default quiz-icon margin-bottom-small" (click)="addDynamicRow()"></i>
         <p class="margin-left-small display-inline">Přidat otázku</p>
     </div>
     <div class="float-right" *ngIf="getControls().length !== 0">
         <button class="btn btn-primary navbar-color-default" (click)="onSubmit()" [disabled]="!addForm.valid">
-            <i class="fa fa-plus fa-lg"></i>
-            <p style="display: inline;" class="margin-left-small text-bold">Vytvořit</p>
+            <i class="fa fa-lg" [ngClass]="{'fa-plus': !quiz, 'fa-pencil': quiz}"></i>
+            <p class="margin-left-small text-bold inline">{{!quiz ? 'Vytvořit': 'Upravit'}}</p>
         </button>
     </div>
 </div>
-
-<div class="row text-secondary">
-   
-    <!-- <div class="col-md-3">
-        <i class="fa fa-plus fa-lg navbar-color-default quiz-icon margin-bottom-small"></i>
-        <p style="display: inline;" class="margin-left-small">Přidat uzavřenou otázku</p>
-    </div>
-    <div class="col-md-3">
-        <i class="fa fa-plus fa-lg navbar-color-default quiz-icon margin-bottom-small"></i>
-        <p style="display: inline;" class="margin-left-small">Přidat výběr z možností</p>
-    </div> -->
-</div> 
-
-<!-- <ng-template #row >
-    <div class="row">
-        <div class="col-md-2">
-            <div class="form-group">
-                <input id="title" type="text" formControlName="title" class="form-control" placeholder="Otázka">
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <input id="description" type="text" formControlName="description" class="form-control" placeholder="Upřesnění">
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <input id="title" type="text" formControlName="type" class="form-control" placeholder="Typ">
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <input id="title" type="text" formControlName="choice" class="form-control" placeholder="Možnost">
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <input id="title" type="text" formControlName="valid_choice" class="form-control" placeholder="Správná odpověď">
-            </div>
-        </div>
-    </div>
-</ng-template> -->

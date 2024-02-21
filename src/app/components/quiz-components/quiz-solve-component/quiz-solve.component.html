@@ -1,64 +1,103 @@
 
-<form [formGroup]="solveForm">
+<form [formGroup]="solveForm" (keydown.enter)="$event.preventDefault()">
     <div class="row">
-        <div class="col-md-12">
-            <!-- <i class="fa fa-pencil" style="margin-right: 10px; font-size: 20px;"></i> -->
-            <h2 class="section-heading mb-4 inline-block">{{title}}</h2>
-            <p class="paragraph text-muted">{{description}}</p>
+        <div class="col-md-12" *ngIf="quiz">
+            <h2 class="section-heading mb-4 inline-block">{{quiz.title}}</h2>
+            <p class="paragraph text-muted">{{quiz.description}}</p>
         </div>
         <p-divider></p-divider>
     </div>
     <div class="row">
-        
-
-        <div class="col-md-6 col-md-offset-3" style="padding: 5px;" *ngFor="let item of getControls(); let i = index" formArrayName="questions">
-            <div class="question-number-f" *ngIf="item.value.correct === null">
-                <p-badge [value]="(i + 1).toString()" severity="#7e3d9b" size="xlarge"></p-badge>
-            </div>
-            <div class="question-number-f" *ngIf="item.value.correct === true">
-                <i class="fa fa-check-circle-o" aria-hidden="true" style="color: #28a745 !important; font-size: 30px; background-color: white; border-radius: 100%;"></i>
-            </div>
-            <div class="question-number-f" *ngIf="item.value.correct === false">
-                <i class="fa fa-times-circle-o" aria-hidden="true" style="color: #dc3545 !important; font-size: 30px; background-color: white; border-radius: 100%;"></i>
-            </div>
-                <div class="col-md-12 no-padding" [ngClass]="{'correct-answer' : item.value.correct === true, 'wrong-answer': item.value.correct === false}">
-                    <p-card [header]="item.value.question">
-                    <p class="text-muted" *ngIf="item.value.description">{{item.value.description}}</p>
-                    <p-divider></p-divider>
-                    <ng-container [ngTemplateOutlet]="setNgOutlet(item.value.type)" [ngTemplateOutletContext]="{choices: item.value.choices, group: i}"></ng-container>
-                </p-card>
+        <div class="col-md-10">
+            <div class="col-md-12 padding-small" *ngFor="let item of getControls(); let i = index" formArrayName="questions">
+                <div class="question-number-f" *ngIf="item.value.correct === null">
+                    <p-badge [value]="(i + 1).toString()" severity="#7e3d9b" size="xlarge"></p-badge>
                 </div>
-            <div class="col-md-6" *ngIf="item.value.correct === false" >
-                <p class="text-danger">{{'Správná odpověď: ' + getCorrectAnswersString(item.value)}}</p>
+                <div class="question-number-f" *ngIf="item.value.correct === true">
+                    <i class="fa fa-check-circle-o" aria-hidden="true" style="color: #28a745 !important; font-size: 30px; background-color: white; border-radius: 100%;"></i>
+                </div>
+                <div class="question-number-f" *ngIf="item.value.correct === false">
+                    <i class="fa fa-times-circle-o" aria-hidden="true" style="color: #dc3545 !important; font-size: 30px; background-color: white; border-radius: 100%;"></i>
+                </div>
+                    <div class="col-md-12 no-padding" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;" [ngClass]="{'correct-answer' : item.value.correct === true, 'wrong-answer': item.value.correct === false}">
+                        <p-card [header]="item.value.question">
+                            <div class="text-muted" style="white-space: pre-wrap;" *ngIf="item.value.description" [innerHtml]="item.value.description"></div>
+                            <p-divider></p-divider>
+                            <ng-container [ngTemplateOutlet]="setNgOutlet(item.value.type)" [ngTemplateOutletContext]="{choices: item.value.choices, group: i}"></ng-container>
+                        </p-card>
+                    </div>
+                <div class="col-md-6" *ngIf="item.value.correct === false" >
+                    <p class="text-danger">{{'Správná odpověď: ' + getCorrectAnswersString(item.value)}}</p>
+                </div>
             </div>
+        </div>
+        <ng-container [ngTemplateOutlet]="infoPanel"></ng-container>
+    </div>
+    <div class="row">
+        <div *ngIf="getControls().length !== 0" class="col-md-12 margin-top-md">
+            <button class="btn btn-primary navbar-color-default" (click)="onSubmit()" *ngIf="!isSubmited">
+                <i class="fa fa-plus fa-lg"></i>
+                <p style="display: inline;" class="margin-left-small text-bold">Vyhodnotit</p>
+            </button>
+            <button class="btn btn-primary navbar-color-default" [routerLink]="['/quiz-grid-component']" *ngIf="isSubmited">
+                <i class="fa fa-arrow-left fa-lg"></i>
+                <p style="display: inline;" class="margin-left-small text-bold">Zpět na přehled</p>
+            </button>
         </div>
     </div>
     <ng-template #select let-choices="choices" let-group="group" formArrayName="questions">
         <div class="form-group" [formGroupName]="group">
-            <p-dropdown [options]="prepareChoices(choices)" ptionLabel="name" formControlName="answer" [style]="{'minWidth':'100%'}" placeholder="Vyberte"></p-dropdown>
+            <p-dropdown [options]="prepareChoices(choices)" formControlName="answer" [style]="{'minWidth':'100%'}" placeholder="Vyberte" 
+            (onChange)="recalculateAnsweredQuestions()"></p-dropdown>
         </div>
     </ng-template>
-    
+
     <ng-template #text let-group="group" formArrayName="questions">
         <div class="form-group" [formGroupName]="group">
-            <input type="text" formControlName="answer" class="form-control" placeholder="Odpověď">
+            <input type="text" formControlName="answer" class="form-control" placeholder="Odpověď" (change)="recalculateAnsweredQuestions()">
         </div>
     </ng-template>
 
     <ng-template #radio let-choices="choices" let-group="group" formArrayName="questions" >
-          <div class="form-check" *ngFor="let choice of choices;" [formGroupName]="group">
-            <input class="form-check-input margin-right-small" type="checkbox" [value]="choice.id" formControlName="answer" (change)="onCheckBoxClick($event, group)">
-            <label>
-              {{choice.description}}
-            </label>
-          </div>
+        <div class="form-check" *ngFor="let choice of choices;" [formGroupName]="group">
+            <input class="form-check-input margin-right-small" type="checkbox" [value]="choice.id" formControlName="answer" 
+            (change)="onCheckBoxClick($event, group); recalculateAnsweredQuestions()">
+            <label>{{choice.description}}</label>
+        </div>
+    </ng-template>
+
+    <ng-template #infoPanel>
+        <div class="col-md-2 info-panel">
+            <div class="row">
+                <div class="info-panel-title">
+                    <p class="padding-left-mid text-white">Info</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 text-center">
+                    <p class="text-muted">Čas</p>
+                    <p class="text-bold">{{timeText}}</p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <p class="text-muted">Otázky</p>
+                    <p class="text-bold">{{numberOfSolvedQuestions + '/' + numberOfQuestions}}</p>
+                </div>
+            </div>
+            <div class="row margin-top-small text-center" *ngIf="isSubmited">
+                <p-divider></p-divider>
+                <div class="col-md-4">
+                    <p class="text-bold">Správně</p>
+                    <p class="font-size-30 text-success">{{numberOfCorrectQuestions}}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="text-bold">Špatně</p>
+                    <p class="font-size-30 text-danger">{{numberOfWrongQuestions}}</p>
+                </div>
+                <div class="col-md-4 ">
+                    <p class="text-bold">%</p>
+                    <p class="font-size-30 text-info">{{(numberOfCorrectQuestions / numberOfQuestions) * 100 | number: '1.0-1'}}</p>
+                </div>
+            </div>
+        </div>
     </ng-template>
 </form>
-<div class="row">
-    <div class="float-right" *ngIf="getControls().length !== 0">
-            <button class="btn btn-primary navbar-color-default" (click)="onSubmit()">
-            <i class="fa fa-plus fa-lg"></i>
-            <p style="display: inline;" class="margin-left-small text-bold">Vyhodnotit</p>
-        </button>
-    </div>
-</div>

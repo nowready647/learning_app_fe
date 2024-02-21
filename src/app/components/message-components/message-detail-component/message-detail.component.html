@@ -1,0 +1,62 @@
+<div  *ngIf="message">
+    <div class="row">
+        <div class="margin-bottom-2xbig">
+            <h2 class="title">Dotaz</h2>
+            <p-divider></p-divider>
+        </div>
+        <div class="row">
+            <ng-container [ngTemplateOutlet]="question" [ngTemplateOutletContext]="{message: message}"></ng-container>
+        </div>  
+        <div class="row" *ngFor="let item of message.answers">
+            <ng-container [ngTemplateOutlet]="item.id_creator === message.id_creator ? question : answer" [ngTemplateOutletContext]="{message: item}"></ng-container>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 200px;">
+        <p-divider></p-divider>
+        <div class="float-right">
+            <p-button label="Uzavřít" icon="pi pi-check" styleClass="p-button-lg p-button-success" (onClick)="solveMessage()" *ngIf="userId && message.solved === 0 && userId === message.id_creator"></p-button>
+            <p-button label="Odpovědět" icon="pi pi-reply" styleClass="p-button-lg margin-left-small" (onClick)="displayForm = true;" *ngIf="userId && message.solved === 0"></p-button>
+        </div>
+    </div>
+</div>
+
+<ng-template #question let-message="message">
+    <div class="row">
+        <div class="col-md-10 col-sm-10 col-xs-10" style="border: 1px solid #893bae; border-radius: 20px 20px 20px 0; margin-bottom: 20px; padding: 20px; margin-left: 6%; background-color: #FBF8FD;">
+            <p class="text-bold font-size-20">{{message.title}}</p>
+            <p-divider></p-divider>
+            <p class="paragraph" style="white-space: pre-wrap;">{{message.content}}</p>
+        </div>
+    </div>
+    <div class="col-md-1 col-sm-1 col-xs-1" style="top: -15px">
+        <div class="text-center">
+            <i class="fa fa-user font-size-30 text-default-color"></i>
+            <p class="text-bold" style="margin: 0 !important">{{message.user.nick}}</p>
+            <p class="text-muted">{{message.date_add}}</p>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #answer let-message="message">
+    <div class="row">
+        <div class="col-md-10 col-sm-10 col-xs-10" style="border: 1px solid lightgrey; border-radius: 20px 20px 0 20px; margin-bottom: 20px; padding: 20px; margin-left: 10.7%; background-color: #FAFAFA;">
+            <p class="text-bold font-size-20">{{message.title}}</p>
+            <p-divider></p-divider>
+            <p class="paragraph" style="white-space: pre-wrap;">{{message.content}}</p>
+        </div>
+    </div>
+    <div class="col-md-1 col-sm-1 col-xs-1 col-md-offset-11" style="top: -15px">
+        <div class="text-center">
+            <i class="fa fa-user font-size-30"></i>
+            <p class="text-bold" style="margin: 0 !important">{{message.user.nick}}</p>
+            <p class="text-muted">{{message.date_add}}</p>
+        </div>
+    </div>
+</ng-template>
+
+<p-sidebar [(visible)]="displayForm" position="right" styleClass="p-sidebar-lg" *ngIf="message">
+    <div class="col-md-12">
+        <app-message-form (displayForm)="setDisplayForm($event)" [question]="message"></app-message-form>
+    </div>
+</p-sidebar>
+

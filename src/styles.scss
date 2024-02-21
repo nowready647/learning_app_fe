@@ -5,9 +5,7 @@
 @import "~alertify/themes/alertify.core.css";
 
 .login-panel {
-    // margin: 0 auto;
     background-color: #D4E7F9;
-    // padding: 15px;
     border: #ccc 1px solid;
     border-radius: 0.375rem;
 }
@@ -27,6 +25,14 @@
 
 .padding-small {
     padding: 5px !important;
+}
+
+.padding-mid {
+    padding: 10px !important;
+}
+
+.padding-left-mid {
+    padding-left: 10px;
 }
 
 .margin-top {
@@ -53,7 +59,7 @@
     margin-right: 20px !important;
 }
 
-.margin-bottom-big {
+.margin-bottom-2xbig {
     margin-bottom: 40px !important;
 }
 
@@ -114,6 +120,14 @@
     margin-bottom: 5px;
 }
 
+.font-size-30 {
+    font-size: 30px;
+}
+
+.font-size-20 {
+    font-size: 20px;
+}
+
 .dropdown-toggle:active, .open .dropdown-toggle {
     background:#9773a6 !important; 
     color:#000 !important;
@@ -127,8 +141,16 @@
     background-color: #893bae !important;
 }
 
+.text-default-color {
+   color: #893bae !important;
+}
+
 a.hover-off:hover {
     background-color: #7e3d9b !important;
+}
+
+.inline { 
+    display: inline;
 }
 
 .menu-button:hover {
@@ -195,27 +217,27 @@ a.hover-off:hover {
     z-index: 1;
 }
 
-  .delete-question {
+.delete-question {
     float: right;
     position: relative;
     bottom: -27px;
     left: 26px;
     z-index: 1;
     color: red;
-  }
+}
 
-  .display-inline {
+.display-inline {
     display: inline;
-  }
+}
 
   .pointer-event-auto {
     cursor: pointer;
   }
 
-  .bg-transparent {
+.bg-transparent {
     background-color: transparent;
     border: none;
-  }
+}
 
 .correct-answer {
     border: #28a745 2px solid !important;
@@ -235,31 +257,150 @@ a.hover-off:hover {
     max-width: 500px;
   }
 
-  .container2 {
+.container2 {
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
     gap: 10px;
-  }
+}
   
-  .quiz-card {
+.quiz-card {
     flex-basis: calc(33.33% - 10px);
     display: flex; 
-    flex-direction: column; 
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 2px;
-  }
+    background-color: white;
+} 
 
-  .quiz-card-create {
-    flex-basis: calc(33.33% - 10px);
-    display: flex; 
-    flex-direction: column; 
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-    border-radius: 2px;
-  }
-
-  .quiz-card:hover {
+.quiz-card:hover {
     background-color: #ECEBEE;
     cursor: pointer;
-    transition: 0.3s;
-  }
+    border: #893bae 1px solid;
+    transition: 1s;
+}
+
+
+.quiz-card-padding {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+
+.quiz-card-color-stripe {
+    position: absolute;
+    left: 0;
+    min-height: 5px !important;
+    transition: 1s; 
+}
+
+
+.quiz-card-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.button-panel {
+    padding-top: 0px;
+    padding-bottom: 5px;
+    display: flex;
+}
+
+.margin-left-auto {
+    margin-left: auto;
+}
+
+.margin-top-auto {
+    margin-top: auto;
+}
+
+.margin-bottom-big {
+    margin-bottom: 20px !important;
+}
+
+.quiz-card-create {
+    flex-basis: calc(33.33% - 10px);
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 2px;
+}
+
+div.info-panel {
+    position: sticky;
+    top: 30px;
+    border: #7e3d9b 1px solid;
+    border-radius: 5px;
+}
+
+.info-panel-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background-color: #893bae;
+}
+
+.correct-answers {
+    background-color: #28a745;
+    border-radius: 0px 0px 0px 4px;
+}
+
+.wrong-answers {
+    background-color: #dc3545;
+}
+
+.result {
+    background-color: #6d757d;
+    border-radius: 0px 0px 4px 0px;
+}
+
+.text-color-white {
+    color: white;
+}
+
+.check-circle {
+    background-color: #28a745;
+    border-radius: 100%;
+    height: 90px;
+    width: 90px;
+    padding-left: 22px;
+    padding-top: 49px;
+    position: relative;
+    font-size: 20px;
+}
+
+.border-radius-3 {
+    border-radius: 3px 3px 0 0;
+}
+
+.info {
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    border-radius: 89%;
+    left: -3px;
+    top: -3px;
+    height: 13px;
+}
+
+.p-tabview-nav {
+    font-size: 15px !important;
+}
+
+.p-tabview-panel {
+    font-size: 15px !important;
+}
+
+.p-tabview-nav-container {
+    margin-bottom: 10px !important;
+}
+
+.filter {
+    border: #893bae 1px solid;
+    border-radius: 10px;
+}
+
+.lection-padding {
+    padding: 10px 10px 50px 10px;
+}

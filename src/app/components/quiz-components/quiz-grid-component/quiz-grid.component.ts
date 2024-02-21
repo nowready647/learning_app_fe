@@ -33,6 +33,7 @@ export class QuizGridComponent implements OnInit {
 
   protected getQuizes(): void {
     this.quizService.getList(this.userId, this.page, this.filters).subscribe((res) => {
+      console.log(res.body);
       this.list = res.body;
     })
   }

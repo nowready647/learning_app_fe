@@ -7,4 +7,5 @@ export interface Question {
     description: string;
     input_type: string;
     choice: Array<Choice>;
+    inactive: Date | null;
 }

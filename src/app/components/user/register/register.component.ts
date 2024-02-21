@@ -1,9 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { FormControl } from "@angular/forms";
+import { SessionStorageService } from "ngx-webstorage";
 import { LoginService } from "src/app/services/login.service";
-import { UserService } from "src/app/services/user.service";
 import { User } from "src/environments/User";
-import { Md5 } from 'ts-md5';
+declare var alertify:any;
 
 @Component({
     selector: 'app-register',
@@ -19,19 +19,29 @@ export class RegisterComponent {
     @Output() userEntity = new EventEmitter<User>();
 
     constructor(
+        private session: SessionStorageService,
         private loginService: LoginService
     ){}
 
     public onRegisterButtonClick() {
-        this.loginService.registerUser(this.email.value, this.user.value, this.password.value).subscribe((data) => {
-            let user: User = {
-                id: data.data.id,
-                nick: data.data.nick,
-                email: data.data.email,
-                accessToken: null,
-                password: null
-              }
-            this.sendToParent(user);
+        this.loginService.registerUser(this.email.value, this.user.value, this.password.value).subscribe({
+            next: (data) => {
+                let user: User = {
+                    id: data.result.id,
+                    nick: data.result.nick,
+                    email: data.result.email,
+                    accessToken: data.result.token,
+                    password: null
+                  }
+                this.session.store('userId', user.id);
+                this.session.store('accessToken', user.accessToken);
+                this.sendToParent(user);
+                alertify.success('Registrace proběhla úspěšně.');
+            }, 
+            error: (error) => {
+                console.log(error);
+                alertify.error('CHYBA: ' + error.error.message)
+            }
         })
     }
 

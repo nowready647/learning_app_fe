@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { SessionStorageService } from "ngx-webstorage";
+import { LectionService } from "src/app/services/lection.service";
 import { QuizService } from "src/app/services/quiz.service";
 import { UserService } from "src/app/services/user.service";
 import { Quiz } from "src/environments/Quiz";

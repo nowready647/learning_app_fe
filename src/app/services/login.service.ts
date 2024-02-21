@@ -17,12 +17,12 @@ export class LoginService {
         private apiService: ApiHttpService
         ) {}
 
-    public verifyCredentials(email: string, password: string): Observable<any> {
+    public verifyCredentials(email: string, password: string): any {
         var params = {
             email: email,
             password: password
         }
-        return this.apiService.post(this.constants.API_VERIFY_CREDENTIALS, {params: params}, {responseType: 'json'});
+        return this.apiService.post<any>(this.constants.API_VERIFY_CREDENTIALS, {params: params}, {observe: 'response'});
     }
 
     public registerUser(email: string, user: string, password: string): Observable<any> {
